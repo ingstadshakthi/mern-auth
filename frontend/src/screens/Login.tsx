@@ -1,15 +1,45 @@
-import { useState, FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, FormEvent, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Form, Button, Row, Col } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
 import FormContainer from '../components/FormContainer';
+import { useLoginMutation } from '../slices/userApiSlice';
+import { setCredentials } from '../slices/authSlice';
+import { toast } from 'react-toastify';
+import Loader from '../components/Loader';
+
+// interface Error {
+//   data: { message: string; error: Array<string>; status: string };
+//   status: number;
+//   error: string;
+// }
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [login, { isLoading }] = useLoginMutation();
+
+  const { userInfo } = useSelector((state: any) => state.auth);
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate('/');
+    }
+  }, [navigate, userInfo]);
+
   const submitHandler = async (e: FormEvent) => {
     e.preventDefault();
-    console.log('submit');
+    try {
+      const res = await login({ email, password }).unwrap();
+      dispatch(setCredentials({ ...res }));
+      navigate('/');
+    } catch (err: any) {
+      toast.error(err?.data?.message || err?.error);
+    }
   };
 
   return (
@@ -36,7 +66,7 @@ const LoginScreen = () => {
             onChange={(e) => setPassword(e.target.value)}
           ></Form.Control>
         </Form.Group>
-
+        {isLoading && <Loader />}
         <Button type='submit' variant='primary' className='mt-3'>
           Sign In
         </Button>

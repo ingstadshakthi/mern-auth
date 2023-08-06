@@ -7,7 +7,7 @@
     "start": "node server.js",
     "server": "nodemon server.js",
     "client": "npm run dev --prefix frontend",
-    "dev":"npm run server && npm run client"
+    "dev": "npm run server && npm run client"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,7 @@
     "express": "^4.18.2",
     "express-async-handler": "^1.2.0",
     "jsonwebtoken": "^9.0.1",
-    "mongoose": "^7.4.1"
+    "mongoose": "^7.4.1",
+    "path": "^0.12.7"
   }
 }
